@@ -535,6 +535,8 @@ public class RedisSessionManager extends ManagerBase implements Lifecycle {
 
       session.setId(id);
       session.setNew(false);
+      //I think this line should ba annotated ,because the serialized has it own MaxInactiveInterval,you should not
+      //set a value as the manager's MaxInactiveInterval,they may be different
       session.setMaxInactiveInterval(getMaxInactiveInterval());
       session.access();
       session.setValid(true);
@@ -624,6 +626,8 @@ public class RedisSessionManager extends ManagerBase implements Lifecycle {
       }
 
       log.trace("Setting expire timeout on session [" + redisSession.getId() + "] to " + getMaxInactiveInterval());
+      //@Authore lxx 
+      //this problem is same,you should set a expire time using session.maxInactiveInterval not redisManager
       jedis.expire(binaryId, getMaxInactiveInterval());
 
       error = false;
