@@ -535,7 +535,8 @@ public class RedisSessionManager extends ManagerBase implements Lifecycle {
 
       session.setId(id);
       session.setNew(false);
-      session.setMaxInactiveInterval(getMaxInactiveInterval());
+      //@Author LXX从redis反序列化的session有过期时间，不需要再设置。向redis序列化时设置的过期时间为session的过期时间不是sessionmaneger的
+      //session.setMaxInactiveInterval(getMaxInactiveInterval());
       session.access();
       session.setValid(true);
       session.resetDirtyTracking();
@@ -624,8 +625,11 @@ public class RedisSessionManager extends ManagerBase implements Lifecycle {
       }
 
       log.trace("Setting expire timeout on session [" + redisSession.getId() + "] to " + getMaxInactiveInterval());
-      jedis.expire(binaryId, getMaxInactiveInterval());
-
+      //@Author lxx 保存时的过期时间不应该从menager里取
+      //jedis.expire(binaryId, getMaxInactiveInterval());
+      //负数为永久有效
+      if（redisSession.getMaxInactiveInterval()>0)
+          jedis.expire(binaryId, redisSession.getMaxInactiveInterval());
       error = false;
 
       return error;
